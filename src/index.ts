@@ -1,12 +1,6 @@
-import * as dotenv from "dotenv";
-
 import bodyParser from "body-parser";
 import express from "express";
 import routes from "./routes";
-
-const envFile = `.${process.env.NODE_ENV}.env`;
-
-dotenv.config({ path: envFile });
 
 const server = express();
 const port = 3000;
