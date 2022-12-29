@@ -1,4 +1,4 @@
-export const config = {
+module.exports = {
   development: {
     username: process.env.USERNAME,
     password: process.env.PASSWORD,

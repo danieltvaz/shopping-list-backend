@@ -1,6 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 
-import sequelize from "../db";
+import sequelize from "../src/db";
 
 const User = sequelize.define<Model<{ name: string; password: string; email: string; jwt: string }>>("User", {
   name: DataTypes.STRING,

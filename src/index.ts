@@ -1,5 +1,3 @@
-import "./db/models/index.js";
-
 import * as dotenv from "dotenv";
 
 import bodyParser from "body-parser";

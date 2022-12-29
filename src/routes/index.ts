@@ -1,5 +1,5 @@
 import { DB_RESPONSE_MESSAGE, ROUTE_RESPONSE_MESSAGE } from "../constants/status-messages";
-import User, { getUserCredentials, getUserName } from "../db/models/user";
+import User, { getUserCredentials, getUserName } from "../../models/user";
 
 import { Express } from "express";
 import jwt from "jsonwebtoken";
