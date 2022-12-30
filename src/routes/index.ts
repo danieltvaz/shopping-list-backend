@@ -1,7 +1,8 @@
 import { DB_RESPONSE_MESSAGE, ROUTE_RESPONSE_MESSAGE } from "../constants/status-messages";
-import Product, { getProducts, newProduct } from "../../models/product";
+import Product, { getProducts, newProduct, removeProduct, updateProduct } from "../../models/product";
 import User, { getUserCredentials, getUserEmail, getUserName, newUser, updateJwt } from "../../models/user";
 
+import { Error } from "sequelize";
 import { Express } from "express";
 import generateNewJwt from "../utils/generate-jwt";
 import identifyUser from "../middlewares/identify-user";
@@ -14,14 +15,14 @@ export default function routes(server: Express) {
 
   server.post("/auth/signin", async (req, res) => {
     try {
-      const email = req.body.email;
-      const password = req.body.password;
+      const email = req.body.email.toLowerCase();
+      const password = req.body.password.toLowerCase();
 
       const { email: userEmail, password: userPassword } = await getUserCredentials(email);
-      const userName = await getUserName(email);
 
-      if (email === userEmail && password === userPassword) {
+      if (email === userEmail.toLowerCase() && password === userPassword.toLowerCase()) {
         const jwt = generateNewJwt(email);
+        const userName = await getUserName(email);
 
         await updateJwt(email, jwt);
 
@@ -33,10 +34,15 @@ export default function routes(server: Express) {
       } else {
         res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_ERROR.code).json({
           statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_ERROR.statusMessage,
-          message: "Wrong email or password",
+          message: "Invalid email or password",
         });
       }
-    } catch {}
+    } catch (e: any) {
+      res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
+        statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
+        message: e.message,
+      });
+    }
   });
 
   server.post("/auth/signup", async (req, res) => {
@@ -68,11 +74,16 @@ export default function routes(server: Express) {
 
       await newProduct(productName, userId);
 
-      res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_INSUFICIENT_DATA.code).json({
+      res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
         statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
         message: "Product succesfully added.",
       });
-    } catch {}
+    } catch {
+      res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
+        statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
+        message: "An error has ocurred",
+      });
+    }
   });
 
   server.get("/list/products", jwtCheck, identifyUser, async (req, res) => {
@@ -85,6 +96,49 @@ export default function routes(server: Express) {
         statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
         data: products,
       });
-    } catch {}
+    } catch {
+      res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
+        statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
+        message: "An error has ocurred",
+      });
+    }
+  });
+
+  server.put("/list/products", jwtCheck, identifyUser, async (req, res) => {
+    try {
+      const newProduct = req.body.product;
+      const userId = JSON.parse(req.headers.user as any).id;
+
+      await updateProduct(newProduct, userId);
+
+      res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
+        statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
+        message: "Product updated succesfully",
+      });
+    } catch {
+      res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
+        statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
+        message: "An error has ocurred",
+      });
+    }
+  });
+
+  server.delete("/list/products", jwtCheck, identifyUser, async (req, res) => {
+    try {
+      const productId = req.body.productId;
+      const userId = JSON.parse(req.headers.user as any).id;
+
+      await removeProduct(productId, userId);
+
+      res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
+        statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
+        message: "Product removed succesfully",
+      });
+    } catch {
+      res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
+        statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
+        message: "An error has ocurred",
+      });
+    }
   });
 }

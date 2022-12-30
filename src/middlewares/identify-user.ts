@@ -13,8 +13,6 @@ export default async function identifyUser(req: Request, res: Response, next: Ne
     const userEmail = decodedRequestJwt.email;
     const userId = await getUserId(userEmail);
 
-    console.log(userEmail, userId);
-
     req.headers.user = JSON.stringify({
       email: userEmail,
       id: userId,

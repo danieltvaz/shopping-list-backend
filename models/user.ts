@@ -10,14 +10,18 @@ const User = sequelize.define<Model<{ id?: string; name: string; password: strin
 });
 
 export async function getUserCredentials(email: string) {
-  const credentials = await User.findAll({
-    attributes: ["email", "password"],
-    where: {
-      email: email,
-    },
-  });
+  try {
+    const credentials = await User.findAll({
+      attributes: ["email", "password"],
+      where: {
+        email: email,
+      },
+    });
 
-  return credentials[0].dataValues;
+    return credentials[0].dataValues;
+  } catch (e: any) {
+    throw new Error("User not found");
+  }
 }
 
 export async function getUserName(email: string) {
@@ -64,16 +68,20 @@ export async function getUserId(email: string) {
 }
 
 export async function updateJwt(email: string, jwt: string) {
-  await User.update(
-    {
-      jwt,
-    },
-    {
-      where: {
-        email,
+  try {
+    await User.update(
+      {
+        jwt,
       },
-    }
-  );
+      {
+        where: {
+          email,
+        },
+      }
+    );
+  } catch (e: any) {
+    throw new Error(e);
+  }
 }
 
 export async function newUser(name: string, email: string, password: string) {
