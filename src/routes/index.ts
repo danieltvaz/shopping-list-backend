@@ -4,6 +4,7 @@ import User, { getUserCredentials, getUserEmail, getUserName, newUser, updateJwt
 
 import { Error } from "sequelize";
 import { Express } from "express";
+import delayer from "../middlewares/delayer";
 import generateNewJwt from "../utils/generate-jwt";
 import identifyUser from "../middlewares/identify-user";
 import jwtCheck from "../middlewares/jwt-check";
@@ -13,7 +14,7 @@ export default function routes(server: Express) {
     res.send("Hello World!");
   });
 
-  server.post("/auth/signin", async (req, res) => {
+  server.post("/auth/signin", delayer, async (req, res) => {
     try {
       const email = req.body.email.toLowerCase();
       const password = req.body.password.toLowerCase();
@@ -45,7 +46,7 @@ export default function routes(server: Express) {
     }
   });
 
-  server.post("/auth/signup", async (req, res) => {
+  server.post("/auth/signup", delayer, async (req, res) => {
     try {
       const email = req.body.email;
       const password = req.body.password;
@@ -67,7 +68,7 @@ export default function routes(server: Express) {
     } catch {}
   });
 
-  server.post("/list/products", jwtCheck, identifyUser, async (req, res) => {
+  server.post("/list/products", jwtCheck, identifyUser, delayer, async (req, res) => {
     try {
       const productName = req.body.productName;
       const userId = JSON.parse(req.headers.user as any).id;
@@ -86,10 +87,9 @@ export default function routes(server: Express) {
     }
   });
 
-  server.get("/list/products", jwtCheck, identifyUser, async (req, res) => {
+  server.get("/list/products", jwtCheck, identifyUser, delayer, async (req, res) => {
     try {
       const userId = JSON.parse(req.headers.user as any).id;
-
       const products = await getProducts(userId);
 
       res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
@@ -104,7 +104,7 @@ export default function routes(server: Express) {
     }
   });
 
-  server.put("/list/products", jwtCheck, identifyUser, async (req, res) => {
+  server.put("/list/products", jwtCheck, identifyUser, delayer, async (req, res) => {
     try {
       const newProduct = req.body.product;
       const userId = JSON.parse(req.headers.user as any).id;
@@ -123,9 +123,9 @@ export default function routes(server: Express) {
     }
   });
 
-  server.delete("/list/products", jwtCheck, identifyUser, async (req, res) => {
+  server.delete("/list/products", jwtCheck, identifyUser, delayer, async (req, res) => {
     try {
-      const productId = req.body.productId;
+      const productId = req.query.productId as string;
       const userId = JSON.parse(req.headers.user as any).id;
 
       await removeProduct(productId, userId);

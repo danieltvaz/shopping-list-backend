@@ -6,19 +6,26 @@ import { Jwt } from "../types/jwt";
 import { ROUTE_RESPONSE_MESSAGE } from "../constants/status-messages";
 import env from "../../config/env";
 
-export default async function identifyUser(req: Request, res: Response, next: NextFunction) {
+export default async function identifyUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   try {
-    const requestJwt = req.headers.authorization as string;
-    const decodedRequestJwt = (jwt.decode(requestJwt) as Jwt) ?? null;
-    const userEmail = decodedRequestJwt.email;
-    const userId = await getUserId(userEmail);
+    const requestJwt = req.headers.authorization as string | undefined;
 
-    req.headers.user = JSON.stringify({
-      email: userEmail,
-      id: userId,
-    });
+    if (requestJwt) {
+      const decodedRequestJwt = (jwt.decode(requestJwt) as Jwt) ?? null;
+      const userEmail = decodedRequestJwt.email;
+      const userId = await getUserId(userEmail);
 
-    next();
+      req.headers.user = JSON.stringify({
+        email: userEmail,
+        id: userId,
+      });
+
+      next();
+    } else throw new Error("An error has ocurred");
   } catch {
     throw new Error("An error has ocurred");
   }

@@ -11,14 +11,19 @@ const Product = sequelize.define<Model<ProductType>>("Product", {
 });
 
 export async function getProducts(userId: string) {
-  const products = await Product.findAll({
-    attributes: ["id", "productName", "checked"],
-    where: {
-      userId,
-    },
-  });
+  try {
+    const products = await Product.findAll({
+      attributes: ["id", "productName", "checked"],
+      where: {
+        userId,
+      },
+    });
 
-  return products;
+    return products;
+  } catch (e: any) {
+    console.log(e);
+    throw new Error(e);
+  }
 }
 
 export async function newProduct(productName: string, userId: string) {
@@ -56,7 +61,9 @@ export async function removeProduct(productId: string, userId: string) {
         userId: userId,
       },
     });
-  } catch {}
+  } catch (e: any) {
+    throw new Error(e);
+  }
 }
 
 export default Product;
