@@ -2,7 +2,12 @@ import { DataTypes, Model } from "sequelize";
 
 import sequelize from "../src/db";
 
-type ProductType = { productName: string; userId: string; checked: boolean; id?: string };
+type ProductType = {
+  productName: string;
+  userId: string;
+  checked: boolean;
+  id?: string;
+};
 
 const Product = sequelize.define<Model<ProductType>>("Product", {
   productName: DataTypes.STRING,
@@ -21,17 +26,20 @@ export async function getProducts(userId: string) {
 
     return products;
   } catch (e: any) {
-    console.log(e);
     throw new Error(e);
   }
 }
 
 export async function newProduct(productName: string, userId: string) {
-  await Product.create({
-    productName,
-    userId,
-    checked: false,
-  });
+  try {
+    await Product.create({
+      productName,
+      userId,
+      checked: false,
+    });
+  } catch (e: any) {
+    throw new Error(e);
+  }
 }
 
 export async function updateProduct(newProduct: ProductType, userId: string) {
