@@ -18,6 +18,9 @@ module.exports = {
       productName: {
         type: Sequelize.STRING,
       },
+      checked: {
+        type: Sequelize.BOOLEAN,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
