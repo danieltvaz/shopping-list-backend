@@ -25,7 +25,7 @@ export default async function jwtCheck(
       const now = Math.floor(new Date().getTime() / 1000);
 
       const equalJwt = requestJwt === userJwt;
-      const validJwt = jwt.verify(requestJwt, env.JWT_SECRET ?? "");
+      const validJwt = jwt.verify(requestJwt, env.JWT_SECRET);
       const expiredJwt = Number(decodedRequestJwt.exp) < now;
 
       console.log(equalJwt, validJwt, expiredJwt);
