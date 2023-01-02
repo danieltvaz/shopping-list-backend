@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import User, { getUserId, getUserJwt } from "../../models/user";
+import User, { getUserId, getUserJwt } from "../models/user";
 import jwt, { JsonWebTokenError, JwtPayload } from "jsonwebtoken";
 
 import { Jwt } from "../types/jwt";
 import { ROUTE_RESPONSE_MESSAGE } from "../constants/status-messages";
-import env from "../../config/env";
+import env from "../config/env";
 
 export default async function identifyUser(
   req: Request,

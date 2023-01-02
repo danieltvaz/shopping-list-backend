@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": "export NODE_ENV=development && npx nodemon",
-    "start:prod": "export NODE_ENV=production && npx nodemon"
+    "start:prod": "export NODE_ENV=production && npx nodemon",
+    "migrate:prod": "export NODE_ENV=production && npx sequelize-cli db:migrate",
+    "migrate:dev": "export NODE_ENV=development && npx sequelize-cli db:migrate"
   },
   "repository": {
     "type": "git",

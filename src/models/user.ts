@@ -1,6 +1,6 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 
-import sequelize from "../src/db";
+import sequelize from "../db";
 
 const User = sequelize.define<
   Model<{

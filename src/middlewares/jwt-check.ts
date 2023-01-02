@@ -5,8 +5,8 @@ import {
 import { NextFunction, Request, Response } from "express";
 
 import { Jwt } from "../types/jwt";
-import env from "../../config/env";
-import { getUserJwt } from "../../models/user";
+import env from "../config/env";
+import { getUserJwt } from "../models/user";
 import jwt from "jsonwebtoken";
 
 export default async function jwtCheck(

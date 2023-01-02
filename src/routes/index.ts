@@ -8,13 +8,13 @@ import {
   getUserName,
   newUser,
   updateJwt,
-} from "../../models/user";
+} from "../models/user";
 import {
   getProducts,
   newProduct,
   removeProduct,
   updateProduct,
-} from "../../models/product";
+} from "../models/product";
 
 import { Express } from "express";
 import generateNewJwt from "../utils/generate-jwt";
