@@ -8,7 +8,9 @@
     "start:dev": "export NODE_ENV=development && npx nodemon",
     "start:prod": "export NODE_ENV=production && npx nodemon",
     "migrate:prod": "export NODE_ENV=production && npx sequelize-cli db:migrate",
-    "migrate:dev": "export NODE_ENV=development && npx sequelize-cli db:migrate"
+    "migrate:dev": "export NODE_ENV=development && npx sequelize-cli db:migrate",
+    "build:prod": "export NODE_ENV=production && npx tsc",
+    "build:dev": "export NODE_ENV=development && npx tsc"
   },
   "repository": {
     "type": "git",
