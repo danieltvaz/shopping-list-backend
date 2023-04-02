@@ -4,8 +4,6 @@ const envFile = `.${process.env.NODE_ENV}.env`;
 
 dotenv.config({ path: envFile });
 
-console.log(envFile, "#######");
-
 module.exports = {
   development: {
     username: process.env.USERNAME,
