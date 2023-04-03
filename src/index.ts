@@ -13,5 +13,5 @@ server.use(bodyParser.json());
 routes(server);
 
 server.listen(port, () => {
-  console.log(`Example app listening on port ${port} with db: ${env.DATABASE}`);
+  console.log(`Api lista de compras listening on port ${port} with db: ${env.DATABASE}`);
 });

@@ -7,12 +7,14 @@ type ProductType = {
   userId: string;
   checked: boolean;
   id?: string;
+  price: number;
 };
 
 const Product = sequelize.define<Model<ProductType>>("Product", {
   productName: DataTypes.STRING,
   userId: DataTypes.INTEGER,
   checked: DataTypes.BOOLEAN,
+  price: DataTypes.FLOAT,
 });
 
 export async function getProducts(userId: string) {
@@ -30,24 +32,26 @@ export async function getProducts(userId: string) {
   }
 }
 
-export async function newProduct(productName: string, userId: string) {
+export async function newProduct(productName: string, userId: string, price: number) {
   try {
     await Product.create({
       productName,
       userId,
       checked: false,
+      price,
     });
   } catch (e: any) {
     throw new Error(e);
   }
 }
 
-export async function updateProduct(newProduct: ProductType, userId: string) {
+export async function updateProduct(newProduct: ProductType, userId: string, price: string) {
   try {
     await Product.update(
       {
         productName: newProduct.productName,
         checked: newProduct.checked,
+        price: newProduct.price,
       },
       {
         where: {

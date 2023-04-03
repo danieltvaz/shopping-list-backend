@@ -1,20 +1,6 @@
-import {
-  DB_RESPONSE_MESSAGE,
-  ROUTE_RESPONSE_MESSAGE,
-} from "../constants/status-messages";
-import {
-  getAllUsers,
-  getUserCredentials,
-  getUserName,
-  newUser,
-  updateJwt,
-} from "../models/user";
-import {
-  getProducts,
-  newProduct,
-  removeProduct,
-  updateProduct,
-} from "../models/product";
+import { DB_RESPONSE_MESSAGE, ROUTE_RESPONSE_MESSAGE } from "../constants/status-messages";
+import { getAllUsers, getUserCredentials, getUserName, newUser, updateJwt } from "../models/user";
+import { getProducts, newProduct, removeProduct, updateProduct } from "../models/product";
 
 import { Express } from "express";
 import generateNewJwt from "../utils/generate-jwt";
@@ -31,13 +17,9 @@ export default function routes(server: Express) {
       const email = req.body.email.toLowerCase();
       const password = req.body.password.toLowerCase();
 
-      const { email: userEmail, password: userPassword } =
-        await getUserCredentials(email);
+      const { email: userEmail, password: userPassword } = await getUserCredentials(email);
 
-      if (
-        email === userEmail.toLowerCase() &&
-        password === userPassword.toLowerCase()
-      ) {
+      if (email === userEmail.toLowerCase() && password === userPassword.toLowerCase()) {
         const jwt = generateNewJwt(email);
         const userName = await getUserName(email);
 
@@ -50,8 +32,7 @@ export default function routes(server: Express) {
         });
       } else {
         res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_ERROR.code).json({
-          statusMessage:
-            ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_ERROR.statusMessage,
+          statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_ERROR.statusMessage,
           message: "Invalid email or password",
         });
       }
@@ -78,8 +59,7 @@ export default function routes(server: Express) {
         });
       } else {
         res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_INSUFICIENT_DATA.code).json({
-          statusMessage:
-            ROUTE_RESPONSE_MESSAGE.ROUTE_INSUFICIENT_DATA.statusMessage,
+          statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_INSUFICIENT_DATA.statusMessage,
           message: "Missing required data",
         });
       }
@@ -100,8 +80,9 @@ export default function routes(server: Express) {
       try {
         const productName = req.body.productName;
         const userId = JSON.parse(req.headers.user as any).id;
+        const productPrice = req.body.price;
 
-        await newProduct(productName, userId);
+        await newProduct(productName, userId, productPrice);
 
         res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
           statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
@@ -143,8 +124,9 @@ export default function routes(server: Express) {
     try {
       const newProduct = req.body.product;
       const userId = JSON.parse(req.headers.user as any).id;
+      const price = JSON.parse(req.headers.user as any).price;
 
-      await updateProduct(newProduct, userId);
+      await updateProduct(newProduct, userId, price);
 
       res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
         statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
