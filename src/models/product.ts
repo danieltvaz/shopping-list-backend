@@ -20,7 +20,7 @@ const Product = sequelize.define<Model<ProductType>>("Product", {
 export async function getProducts(userId: string) {
   try {
     const products = await Product.findAll({
-      attributes: ["id", "productName", "checked"],
+      attributes: ["id", "productName", "checked", "price"],
       where: {
         userId,
       },
