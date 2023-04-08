@@ -1,8 +1,9 @@
 import { DataTypes, Model } from "sequelize";
 
+import { Op } from "sequelize";
 import sequelize from "../db";
 
-type ProductType = {
+export type ProductType = {
   productName: string;
   userId: string;
   checked: boolean;
@@ -17,8 +18,20 @@ const Product = sequelize.define<Model<ProductType>>("Product", {
   price: DataTypes.FLOAT,
 });
 
-export async function getProducts(userId: string) {
+export async function getProducts(userId: string, searchText?: string | any) {
   try {
+    if (searchText) {
+      const products = await Product.findAll({
+        attributes: ["id", "productName", "checked", "price"],
+        where: {
+          productName: {
+            [Op.like]: `%${searchText}%`,
+          },
+        },
+      });
+      return products;
+    }
+
     const products = await Product.findAll({
       attributes: ["id", "productName", "checked", "price"],
       where: {
@@ -28,6 +41,7 @@ export async function getProducts(userId: string) {
 
     return products;
   } catch (e: any) {
+    console.log(e);
     throw new Error(e);
   }
 }

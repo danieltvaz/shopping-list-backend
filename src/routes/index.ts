@@ -105,7 +105,9 @@ export default function routes(server: Express) {
     async (req, res) => {
       try {
         const userId = JSON.parse(req.headers.user as any).id;
-        const products = await getProducts(userId);
+        const searchParam = req?.query?.search;
+
+        const products = await getProducts(userId, searchParam);
 
         res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
           statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
