@@ -41,7 +41,6 @@ export async function getProducts(userId: string, searchText?: string | any) {
 
     return products;
   } catch (e: any) {
-    console.log(e);
     throw new Error(e);
   }
 }
@@ -87,6 +86,23 @@ export async function removeProduct(productId: string, userId: string) {
         userId: userId,
       },
     });
+  } catch (e: any) {
+    throw new Error(e);
+  }
+}
+
+export async function uncheckAllProducts(userId: string) {
+  try {
+    await Product.update(
+      {
+        checked: false,
+      },
+      {
+        where: {
+          userId,
+        },
+      }
+    );
   } catch (e: any) {
     throw new Error(e);
   }
