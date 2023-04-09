@@ -126,9 +126,8 @@ export default function routes(server: Express) {
     try {
       const newProduct = req.body.product;
       const userId = JSON.parse(req.headers.user as any).id;
-      const price = JSON.parse(req.headers.user as any).price;
 
-      await updateProduct(newProduct, userId, price);
+      await updateProduct(newProduct, userId);
 
       res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
         statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
@@ -143,6 +142,25 @@ export default function routes(server: Express) {
   });
 
   server.delete("/list/products", jwtCheck, identifyUser, async (req, res) => {
+    try {
+      const productId = req.query.productId as string;
+      const userId = JSON.parse(req.headers.user as any).id;
+
+      await removeProduct(productId, userId);
+
+      res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
+        statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
+        message: "Product removed succesfully",
+      });
+    } catch {
+      res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
+        statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
+        message: "An error has ocurred",
+      });
+    }
+  });
+
+  server.put("/list/products/uncheck", jwtCheck, identifyUser, async (req, res) => {
     try {
       const productId = req.query.productId as string;
       const userId = JSON.parse(req.headers.user as any).id;

@@ -59,7 +59,7 @@ export async function newProduct(productName: string, userId: string, price: num
   }
 }
 
-export async function updateProduct(newProduct: ProductType, userId: string, price: string) {
+export async function updateProduct(newProduct: ProductType, userId: string) {
   try {
     await Product.update(
       {
