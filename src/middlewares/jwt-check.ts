@@ -1,7 +1,4 @@
-import {
-  DB_RESPONSE_MESSAGE,
-  ROUTE_RESPONSE_MESSAGE,
-} from "../constants/status-messages";
+import { DB_RESPONSE_MESSAGE, ROUTE_RESPONSE_MESSAGE } from "../constants/status-messages";
 import { NextFunction, Request, Response } from "express";
 
 import { Jwt } from "../types/jwt";
@@ -9,11 +6,7 @@ import env from "../config/env";
 import { getUserJwt } from "../models/user";
 import jwt from "jsonwebtoken";
 
-export default async function jwtCheck(
-  req: Request,
-  res: Response,
-  next: NextFunction
-) {
+export default async function jwtCheck(req: Request, res: Response, next: NextFunction) {
   try {
     const requestJwt = req.headers.authorization as string | undefined;
 
@@ -27,8 +20,6 @@ export default async function jwtCheck(
       const equalJwt = requestJwt === userJwt;
       const validJwt = jwt.verify(requestJwt, env.JWT_SECRET);
       const expiredJwt = Number(decodedRequestJwt.exp) < now;
-
-      console.log(equalJwt, validJwt, expiredJwt);
 
       if (!equalJwt || !validJwt || expiredJwt) {
         res.status(401).json({
