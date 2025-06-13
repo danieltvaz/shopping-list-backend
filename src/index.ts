@@ -5,7 +5,7 @@ import express from "express";
 import routes from "./routes";
 
 const server = express();
-const port = 4000;
+const port = env.API_PORT;
 
 server.use(cors());
 server.use(bodyParser.json());
@@ -13,5 +13,5 @@ server.use(bodyParser.json());
 routes(server);
 
 server.listen(port, () => {
-  console.log(`Api lista de compras listening on port ${port} with db: ${env.DATABASE}`);
+  console.log(`Shopping list API listening on port ${port} with db: ${env.DATABASE}`);
 });

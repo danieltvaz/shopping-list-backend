@@ -3,3 +3,5 @@ build
 yarn.lock
 .development.env
 .production.env
+.env
+db_data

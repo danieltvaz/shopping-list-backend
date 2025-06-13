@@ -1,16 +1,16 @@
 {
-  "name": "api-lista-de-compras",
+  "name": "shopping-list-api",
   "version": "1.0.0",
   "description": "",
   "main": "./build/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev": "export NODE_ENV=development && npx nodemon",
-    "start:prod": "export NODE_ENV=production && npx nodemon",
-    "migrate:prod": "export NODE_ENV=production && npx sequelize-cli db:migrate",
-    "migrate:dev": "export NODE_ENV=development && npx sequelize-cli db:migrate",
-    "build:prod": "export NODE_ENV=production && npx tsc",
-    "build:dev": "export NODE_ENV=development && npx tsc"
+    "start:dev": "NODE_ENV=development nodemon",
+    "start:prod": "NODE_ENV=production node build/index.js",
+    "migrate:prod": "NODE_ENV=production sequelize-cli db:migrate",
+    "migrate:dev": "NODE_ENV=development sequelize-cli db:migrate",
+    "build:prod": "NODE_ENV=production tsc",
+    "build:dev": "NODE_ENV=development tsc"
   },
   "repository": {
     "type": "git",
