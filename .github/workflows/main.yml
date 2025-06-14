@@ -56,7 +56,7 @@ jobs:
 
       - name: Compress backend build files
         run: |
-          tar czf backend-build.tar.gz ./build package*.json ecosystem.config.js
+          tar czf backend-build.tar.gz ./build package*.json ecosystem.config.js .env
 
       - name: Copy backend build to EC2
         run: |
