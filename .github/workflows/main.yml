@@ -77,5 +77,5 @@ jobs:
 
             echo "===> Start PM2 using ecosystem file"
             cd build
-            pm2 start ../ecosystem.config.js --env production
+            pm2 start ecosystem.config.js --env production
           EOF
