@@ -56,7 +56,7 @@ jobs:
 
       - name: Compress backend build files
         run: |
-          tar czf backend-build.tar.gz ./build package*.json
+          tar czf backend-build.tar.gz ./build package*.json ecosystem.config.js
 
       - name: Copy backend build to EC2
         run: |
@@ -64,13 +64,18 @@ jobs:
 
       - name: Deploy on EC2 and restart services
         run: |
-          ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
+          ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             set -e
             cd ~/shopping-list/api
 
             echo "===> Deploy"
             tar xzf backend-build.tar.gz -C .
             rm backend-build.tar.gz
+
+            echo "===> Install dependencies"
             npm install --omit=dev
-            pm2 restart shopping-list-api || pm2 start build/index.js --name shopping-list-api
+
+            echo "===> Start PM2 using ecosystem file"
+            cd build
+            pm2 start ../ecosystem.config.js --env production
           EOF
