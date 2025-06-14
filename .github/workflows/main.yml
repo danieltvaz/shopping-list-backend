@@ -26,7 +26,7 @@ jobs:
 
       - name: Generate .env file for production
         run: |
-          cat <<EOF > build/.env
+          cat <<EOF > .env
           NODE_ENV=production
           API_PORT=${{ secrets.API_PORT }}
           MYSQL_HOST=${{ secrets.MYSQL_HOST }}
