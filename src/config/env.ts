@@ -1,9 +1,3 @@
-import * as dotenv from "dotenv";
-
-const envFile = `.env`;
-
-dotenv.config({ path: envFile });
-
 const env = {
   USERNAME: process.env.MYSQL_USER as string,
   PASSWORD: process.env.MYSQL_PASSWORD as string,
