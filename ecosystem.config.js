@@ -6,6 +6,7 @@ module.exports = {
       instances: 1,
       autorestart: true,
       watch: false,
+      exec_mode: "fork",
       env: {
         NODE_ENV: "production",
         API_PORT: process.env.API_PORT,
