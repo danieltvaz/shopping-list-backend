@@ -1,0 +1,76 @@
+name: deploy-shopping_list_api-ec2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ssh_ec2
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - name: Install and build backend
+        run: |
+          npm ci
+          npm run build:prod
+
+      - name: Generate .env file for production
+        run: |
+          cat <<EOF > build/.env
+          NODE_ENV=production
+          API_PORT=${{ secrets.API_PORT }}
+          MYSQL_HOST=${{ secrets.MYSQL_HOST }}
+          MYSQL_PORT=${{ secrets.MYSQL_PORT }}
+          MYSQL_USER=${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          DB_DIALECT=${{ secrets.DB_DIALECT }}
+          EOF
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Create directory on EC2 if doesn't exist
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            mkdir -p ~/shopping-list/api
+
+      - name: Compress backend build files
+        run: |
+          tar czf backend-build.tar.gz ./build package*.json
+
+      - name: Copy backend build to EC2
+        run: |
+          scp -i ~/.ssh/id_ed25519 backend-build.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/shopping-list/api/
+
+      - name: Deploy on EC2 and restart services
+        run: |
+          ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
+            set -e
+            cd ~/shopping-list/api
+
+            echo "===> Deploy"
+            tar xzf backend-build.tar.gz -C .
+            rm backend-build.tar.gz
+            npm install --omit=dev
+            pm2 restart shopping-list-api || pm2 start build/index.js --name shopping-list-api
+          EOF
