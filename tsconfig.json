@@ -11,5 +11,5 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "exclude": ["ecosystem.config.js"]
+  "exclude": ["ecosystem.config.js", "build"]
 }
