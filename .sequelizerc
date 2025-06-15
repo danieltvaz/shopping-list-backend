@@ -3,9 +3,7 @@
 const dotenv = require("dotenv"); // don't forget to require dotenv
 const path = require("path");
 
-const envFile = `.${process.env.NODE_ENV ?? "development"}.env`;
-
-dotenv.config({ path: envFile });
+dotenv.config();
 
 module.exports = {
   config: path.resolve("./src/config", "config.js"),

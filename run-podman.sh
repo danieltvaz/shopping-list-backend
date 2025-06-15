@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 set -a
-source .development.env
+source .env
 set +a
 
 IMAGE_NAME="shopping-list-api:dev"
