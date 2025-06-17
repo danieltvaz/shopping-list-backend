@@ -27,7 +27,7 @@ podman run -d \
   -e MYSQL_DATABASE="$MYSQL_DATABASE" \
   -e MYSQL_USER="$MYSQL_USER" \
   -e MYSQL_PASSWORD="$MYSQL_PASSWORD" \
-  mysql:8
+  docker.io/library/mysql:8
 
 echo "⏳ Database initialization in progress..."
 sleep 10
