@@ -1,9 +1,10 @@
 import { DB_RESPONSE_MESSAGE, ROUTE_RESPONSE_MESSAGE } from "../constants/status-messages";
 import { NextFunction, Request, Response } from "express";
+import { getUserId, getUserJwt } from "../models/user";
 
 import { Jwt } from "../types/jwt";
+import checkJwt from "../utils/check-jwt";
 import env from "../config/env";
-import { getUserJwt } from "../models/user";
 import jwt from "jsonwebtoken";
 
 export default async function jwtCheck(req: Request, res: Response, next: NextFunction) {
@@ -11,22 +12,22 @@ export default async function jwtCheck(req: Request, res: Response, next: NextFu
     const requestJwt = req.headers.authorization as string | undefined;
 
     if (requestJwt) {
-      const decodedRequestJwt = jwt.decode(requestJwt) as Jwt;
+      const validJwt = checkJwt(requestJwt, env.JWT_SECRET);
 
-      const userJwt = await getUserJwt(decodedRequestJwt.email);
-
-      const now = Math.floor(new Date().getTime() / 1000);
-
-      const equalJwt = requestJwt === userJwt;
-      const validJwt = jwt.verify(requestJwt, env.JWT_SECRET);
-      const expiredJwt = Number(decodedRequestJwt.exp) < now;
-
-      if (!equalJwt || !validJwt || expiredJwt) {
+      if (!validJwt) {
         res.status(401).json({
           code: ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_ERROR.code,
           message: "Invalid token",
         });
       } else {
+        const userEmail = validJwt.email;
+        const userId = await getUserId(userEmail);
+
+        req.headers.user = JSON.stringify({
+          email: userEmail,
+          id: userId,
+        });
+
         next();
       }
     } else

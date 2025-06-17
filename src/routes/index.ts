@@ -4,7 +4,6 @@ import { getProducts, newProduct, removeProduct, uncheckAllProducts, updateProdu
 
 import { Express } from "express";
 import generateNewJwt from "../utils/generate-jwt";
-import identifyUser from "../middlewares/identify-user";
 import jwtCheck from "../middlewares/jwt-check";
 
 export default function routes(server: Express) {
@@ -22,8 +21,6 @@ export default function routes(server: Express) {
       if (email === userEmail.toLowerCase() && password === userPassword.toLowerCase()) {
         const jwt = generateNewJwt(email);
         const userName = await getUserName(email);
-
-        await updateJwt(email, jwt);
 
         res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_SUCCESS.code).json({
           name: userName,
@@ -74,7 +71,6 @@ export default function routes(server: Express) {
   server.post(
     "/list/products",
     jwtCheck,
-    identifyUser,
 
     async (req, res) => {
       try {
@@ -100,7 +96,6 @@ export default function routes(server: Express) {
   server.get(
     "/list/products",
     jwtCheck,
-    identifyUser,
 
     async (req, res) => {
       try {
@@ -122,7 +117,7 @@ export default function routes(server: Express) {
     }
   );
 
-  server.put("/list/products", jwtCheck, identifyUser, async (req, res) => {
+  server.put("/list/products", jwtCheck, async (req, res) => {
     try {
       const newProduct = req.body.product;
       const userId = JSON.parse(req.headers.user as any).id;
@@ -141,7 +136,7 @@ export default function routes(server: Express) {
     }
   });
 
-  server.delete("/list/products", jwtCheck, identifyUser, async (req, res) => {
+  server.delete("/list/products", jwtCheck, async (req, res) => {
     try {
       const productId = req.query.productId as string;
       const userId = JSON.parse(req.headers.user as any).id;
@@ -160,7 +155,7 @@ export default function routes(server: Express) {
     }
   });
 
-  server.put("/list/products/uncheckAll", jwtCheck, identifyUser, async (req, res) => {
+  server.put("/list/products/uncheckAll", jwtCheck, async (req, res) => {
     try {
       const userId = JSON.parse(req.headers.user as any).id;
 
