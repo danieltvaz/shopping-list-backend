@@ -26,7 +26,7 @@ export async function getProducts(userId: string, searchText?: string | any) {
   try {
     if (searchText) {
       const products = await Product.findAll({
-        attributes: ["id", "productName", "checked", "price"],
+        attributes: ["id", "productName", "checked", "price", "quantity", "unit"],
         where: {
           productName: {
             [Op.like]: `%${searchText}%`,
@@ -37,7 +37,7 @@ export async function getProducts(userId: string, searchText?: string | any) {
     }
 
     const products = await Product.findAll({
-      attributes: ["id", "productName", "checked", "price"],
+      attributes: ["id", "productName", "checked", "price", "quantity", "unit"],
       where: {
         userId,
       },
