@@ -9,6 +9,8 @@ export type ProductType = {
   checked: boolean;
   id?: string;
   price: number;
+  quantity: number;
+  unit: "KG" | "UN";
 };
 
 const Product = sequelize.define<Model<ProductType>>("Product", {
@@ -16,6 +18,8 @@ const Product = sequelize.define<Model<ProductType>>("Product", {
   userId: DataTypes.INTEGER,
   checked: DataTypes.BOOLEAN,
   price: DataTypes.FLOAT,
+  unit: DataTypes.STRING,
+  quantity: DataTypes.FLOAT,
 });
 
 export async function getProducts(userId: string, searchText?: string | any) {
@@ -45,13 +49,21 @@ export async function getProducts(userId: string, searchText?: string | any) {
   }
 }
 
-export async function newProduct(productName: string, userId: string, price: number) {
+export async function newProduct(
+  productName: string,
+  userId: string,
+  price: number,
+  unit: ProductType["unit"],
+  quantity: ProductType["quantity"]
+) {
   try {
     await Product.create({
       productName,
       userId,
       checked: false,
       price,
+      unit,
+      quantity,
     });
   } catch (e: any) {
     throw new Error(e);
@@ -62,9 +74,7 @@ export async function updateProduct(newProduct: ProductType, userId: string) {
   try {
     await Product.update(
       {
-        productName: newProduct.productName,
-        checked: newProduct.checked,
-        price: newProduct.price,
+        ...newProduct,
       },
       {
         where: {

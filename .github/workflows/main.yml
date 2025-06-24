@@ -73,7 +73,10 @@ jobs:
             rm backend-build.tar.gz
 
             echo "===> Install dependencies"
-            npm install --omit=dev
+            npm install
+
+            echo "===> Run migrations"
+            npx sequelize-cli db:migrate
 
             echo "===> Start PM2 using ecosystem file"
             pm2 start ecosystem.config.js
