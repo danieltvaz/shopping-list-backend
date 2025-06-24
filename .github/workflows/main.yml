@@ -75,6 +75,8 @@ jobs:
             echo "===> Install dependencies"
             npm install
 
+            cd ./build
+
             echo "===> Run migrations"
             npx sequelize-cli db:migrate
 
