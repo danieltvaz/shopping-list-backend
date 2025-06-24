@@ -77,8 +77,10 @@ export default function routes(server: Express) {
         const productName = req.body.productName;
         const userId = JSON.parse(req.headers.user as any).id;
         const productPrice = req.body.price;
+        const quantity = req.body.quantity;
+        const unit = req.body.unit;
 
-        await newProduct(productName, userId, productPrice);
+        await newProduct(productName, userId, productPrice, unit, quantity);
 
         res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
           statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
