@@ -1,6 +1,7 @@
 import { DB_RESPONSE_MESSAGE, ROUTE_RESPONSE_MESSAGE } from "../constants/status-messages";
-import { getAllUsers, getUserCredentials, getUserName, newUser, updateJwt } from "../models/user";
+import { compare, hash } from "bcrypt-ts";
 import { getProducts, newProduct, removeProduct, uncheckAllProducts, updateProduct } from "../models/product";
+import { getUserCredentials, getUserName, newUser } from "../models/user";
 
 import { Express } from "express";
 import generateNewJwt from "../utils/generate-jwt";
@@ -18,7 +19,11 @@ export default function routes(server: Express) {
 
       const { email: userEmail, password: userPassword } = await getUserCredentials(email);
 
-      if (email === userEmail.toLowerCase() && password === userPassword.toLowerCase()) {
+      const isPasswordValid = await compare(password, userPassword);
+
+      console.log(isPasswordValid, password, userPassword);
+
+      if (email === userEmail.toLowerCase() && isPasswordValid) {
         const jwt = generateNewJwt(email);
         const userName = await getUserName(email);
 
@@ -48,7 +53,9 @@ export default function routes(server: Express) {
       const name = req.body.name;
 
       if (email && password && name) {
-        await newUser(name, email, password);
+        const encryptedPassword = await hash(password, 12);
+
+        await newUser(name, email, encryptedPassword);
 
         res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
           statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
