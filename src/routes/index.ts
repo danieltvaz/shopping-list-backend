@@ -1,5 +1,4 @@
 import { DB_RESPONSE_MESSAGE, ROUTE_RESPONSE_MESSAGE } from "../constants/status-messages";
-import { compare, hash } from "bcrypt-ts";
 import { getProducts, newProduct, removeProduct, uncheckAllProducts, updateProduct } from "../models/product";
 import { getUserCredentials, getUserName, newUser } from "../models/user";
 
@@ -19,9 +18,9 @@ export default function routes(server: Express) {
 
       const { email: userEmail, password: userPassword } = await getUserCredentials(email);
 
-      const isPasswordValid = await compare(password, userPassword);
+      const { compare } = await import("bcrypt-ts");
 
-      console.log(isPasswordValid, password, userPassword);
+      const isPasswordValid = await compare(password, userPassword);
 
       if (email === userEmail.toLowerCase() && isPasswordValid) {
         const jwt = generateNewJwt(email);
@@ -53,6 +52,8 @@ export default function routes(server: Express) {
       const name = req.body.name;
 
       if (email && password && name) {
+        const { hash } = await import("bcrypt-ts");
+
         const encryptedPassword = await hash(password, 12);
 
         await newUser(name, email, encryptedPassword);
