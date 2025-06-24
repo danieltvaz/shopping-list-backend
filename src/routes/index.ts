@@ -15,7 +15,7 @@ export default function routes(server: Express) {
   server.post("/auth/signin", async (req, res) => {
     try {
       const email = req.body.email.toLowerCase();
-      const password = req.body.password.toLowerCase();
+      const password = req.body.password;
 
       const { email: userEmail, password: userPassword } = await getUserCredentials(email);
 
