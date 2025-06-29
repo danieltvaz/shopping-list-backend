@@ -118,4 +118,21 @@ export async function uncheckAllProducts(userId: string) {
   }
 }
 
+export async function checkAllProducts(userId: string) {
+  try {
+    await Product.update(
+      {
+        checked: true,
+      },
+      {
+        where: {
+          userId,
+        },
+      }
+    );
+  } catch (e: any) {
+    throw new Error(e);
+  }
+}
+
 export default Product;

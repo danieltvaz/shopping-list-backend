@@ -1,6 +1,13 @@
 import { DB_RESPONSE_MESSAGE, ROUTE_RESPONSE_MESSAGE } from "../constants/status-messages";
 import { compare, hash } from "bcrypt";
-import { getProducts, newProduct, removeProduct, uncheckAllProducts, updateProduct } from "../models/product";
+import {
+  checkAllProducts,
+  getProducts,
+  newProduct,
+  removeProduct,
+  uncheckAllProducts,
+  updateProduct,
+} from "../models/product";
 import { getUserCredentials, getUserName, newUser } from "../models/user";
 
 import { Express } from "express";
@@ -171,6 +178,24 @@ export default function routes(server: Express) {
       res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
         statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
         message: "All products unchecked successfully",
+      });
+    } catch {
+      res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
+        statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
+        message: "An error has ocurred",
+      });
+    }
+  });
+
+  server.put("/list/products/checkAll", jwtCheck, async (req, res) => {
+    try {
+      const userId = JSON.parse(req.headers.user as any).id;
+
+      await checkAllProducts(userId);
+
+      res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
+        statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
+        message: "All products checked successfully",
       });
     } catch {
       res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
