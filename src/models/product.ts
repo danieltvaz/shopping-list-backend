@@ -32,6 +32,10 @@ export async function getProducts(userId: string, searchText?: string | any) {
             [Op.like]: `%${searchText}%`,
           },
         },
+        order: [
+          ["checked", "asc"],
+          ["id", "asc"],
+        ],
       });
       return products;
     }
@@ -41,6 +45,11 @@ export async function getProducts(userId: string, searchText?: string | any) {
       where: {
         userId,
       },
+      order: [
+        ["checked", "asc"],
+        ["id", "asc"],
+        ["updatedAt", "desc"],
+      ],
     });
 
     return products;

@@ -1,5 +1,4 @@
 import { DB_RESPONSE_MESSAGE, ROUTE_RESPONSE_MESSAGE } from "../constants/status-messages";
-import { compare, hash } from "bcrypt";
 import {
   checkAllProducts,
   getProducts,
@@ -8,6 +7,7 @@ import {
   uncheckAllProducts,
   updateProduct,
 } from "../models/product";
+import { compare, hash } from "bcrypt";
 import { getUserCredentials, getUserName, newUser } from "../models/user";
 
 import { Express } from "express";
@@ -98,10 +98,10 @@ export default function routes(server: Express) {
           statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
           message: "Product succesfully added.",
         });
-      } catch {
+      } catch (e: any) {
         res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
           statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
-          message: "An error has ocurred",
+          message: e?.message || "An error has ocurred",
         });
       }
     }
