@@ -34,7 +34,7 @@ export async function getProducts(userId: string, searchText?: string | any) {
         },
         order: [
           ["checked", "asc"],
-          ["id", "asc"],
+          ["id", "desc"],
         ],
       });
       return products;
@@ -47,7 +47,7 @@ export async function getProducts(userId: string, searchText?: string | any) {
       },
       order: [
         ["checked", "asc"],
-        ["id", "asc"],
+        ["id", "desc"],
         ["updatedAt", "desc"],
       ],
     });
