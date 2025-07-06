@@ -1,11 +1,9 @@
 import { DB_RESPONSE_MESSAGE, ROUTE_RESPONSE_MESSAGE } from "../constants/status-messages";
 import { NextFunction, Request, Response } from "express";
-import { getUserId, getUserJwt } from "../models/user";
 
-import { Jwt } from "../types/jwt";
 import checkJwt from "../utils/check-jwt";
 import env from "../config/env";
-import jwt from "jsonwebtoken";
+import { getUserId } from "../models/user";
 
 export default async function jwtCheck(req: Request, res: Response, next: NextFunction) {
   try {
