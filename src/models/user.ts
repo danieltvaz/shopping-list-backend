@@ -8,13 +8,11 @@ const User = sequelize.define<
     name: string;
     password: string;
     email: string;
-    jwt: string;
   }>
 >("User", {
   name: DataTypes.STRING,
   email: DataTypes.STRING,
   password: DataTypes.STRING,
-  jwt: DataTypes.STRING,
 });
 
 export async function getUserCredentials(email: string) {
@@ -25,6 +23,10 @@ export async function getUserCredentials(email: string) {
         email: email,
       },
     });
+
+    if (!credentials || credentials.length === 0) {
+      throw new Error("User not found");
+    }
 
     return credentials[0].dataValues;
   } catch (e: any) {
@@ -41,6 +43,10 @@ export async function getUserName(email: string) {
       },
     });
 
+    if (!credentials || credentials.length === 0) {
+      throw new Error("User not found");
+    }
+
     return credentials[0].dataValues.name;
   } catch (e: any) {
     throw new Error(e);
@@ -56,22 +62,11 @@ export async function getUserEmail(email: string) {
       },
     });
 
+    if (!credentials || credentials.length === 0) {
+      throw new Error("User not found");
+    }
+
     return credentials[0].dataValues.email;
-  } catch (e: any) {
-    throw new Error(e);
-  }
-}
-
-export async function getUserJwt(email: string) {
-  try {
-    const credentials = await User.findAll({
-      attributes: ["jwt"],
-      where: {
-        email: email,
-      },
-    });
-
-    return credentials[0].dataValues.jwt;
   } catch (e: any) {
     throw new Error(e);
   }
@@ -85,24 +80,12 @@ export async function getUserId(email: string) {
         email: email,
       },
     });
-    return credentials[0].dataValues.id;
-  } catch (e: any) {
-    throw new Error(e);
-  }
-}
 
-export async function updateJwt(email: string, jwt: string) {
-  try {
-    await User.update(
-      {
-        jwt,
-      },
-      {
-        where: {
-          email,
-        },
-      }
-    );
+    if (!credentials || credentials.length === 0) {
+      throw new Error("User not found");
+    }
+
+    return credentials[0].dataValues.id;
   } catch (e: any) {
     throw new Error(e);
   }
@@ -114,13 +97,15 @@ export async function newUser(name: string, email: string, password: string) {
       name,
       email,
       password,
-      jwt: "",
     });
   } catch (e: any) {
-    if (e.errors[0].message === "email must be unique") {
+    if (e.errors && e.errors.length > 0 && e.errors[0].message === "email must be unique") {
       throw new Error("Email já cadastrado!");
     }
-    throw new Error(e.message);
+    if (e.message && e.message.includes("email must be unique")) {
+      throw new Error("Email já cadastrado!");
+    }
+    throw new Error(e.message || "Erro ao criar usuário");
   }
 }
 
