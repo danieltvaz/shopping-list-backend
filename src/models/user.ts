@@ -18,7 +18,7 @@ const User = sequelize.define<
 export async function getUserCredentials(email: string) {
   try {
     const credentials = await User.findAll({
-      attributes: ["email", "password"],
+      attributes: ["email", "password", "id"],
       where: {
         email: email,
       },
