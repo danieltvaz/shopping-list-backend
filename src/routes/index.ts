@@ -16,7 +16,7 @@ import jwtCheck from "../middlewares/jwt-check";
 
 export default function routes(server: Express) {
   server.get("/", (req, res) => {
-    res.send("Hello World!");
+    return res.send("Hello World!");
   });
 
   server.post("/auth/signin", async (req, res) => {
@@ -24,27 +24,27 @@ export default function routes(server: Express) {
       const email = req.body.email.toLowerCase();
       const password = req.body.password;
 
-      const { email: userEmail, password: userPassword } = await getUserCredentials(email);
+      const { email: userEmail, password: userPassword, id: userId } = await getUserCredentials(email);
 
       const isPasswordValid = await compare(password, userPassword);
 
-      if (email === userEmail.toLowerCase() && isPasswordValid) {
-        const jwt = generateNewJwt(email);
+      if (email === userEmail.toLowerCase() && isPasswordValid && userId) {
+        const jwt = generateNewJwt(email, +userId);
         const userName = await getUserName(email);
 
-        res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_SUCCESS.code).json({
+        return res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_SUCCESS.code).json({
           name: userName,
           email: userEmail,
           jwt,
         });
       } else {
-        res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_ERROR.code).json({
+        return res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_ERROR.code).json({
           statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_ERROR.statusMessage,
           message: "Invalid email or password",
         });
       }
     } catch (e: any) {
-      res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_ERROR.code).json({
+      return res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_ERROR.code).json({
         statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SIGNIN_ERROR.statusMessage,
         message: e.message,
       });
@@ -62,18 +62,18 @@ export default function routes(server: Express) {
 
         await newUser(name, email, encryptedPassword);
 
-        res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
+        return res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
           statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
           message: "Account succesfully created",
         });
       } else {
-        res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_INSUFICIENT_DATA.code).json({
+        return res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_INSUFICIENT_DATA.code).json({
           statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_INSUFICIENT_DATA.statusMessage,
           message: "Missing required data",
         });
       }
     } catch (e: any) {
-      res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
+      return res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
         statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
         message: e.message,
       });
@@ -94,12 +94,12 @@ export default function routes(server: Express) {
 
         await newProduct(productName, userId, productPrice, unit, quantity);
 
-        res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
+        return res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
           statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
           message: "Product succesfully added.",
         });
       } catch (e: any) {
-        res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
+        return res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
           statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
           message: e?.message || "An error has ocurred",
         });
@@ -118,12 +118,12 @@ export default function routes(server: Express) {
 
         const products = await getProducts(userId, searchParam);
 
-        res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
+        return res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
           statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
           data: products,
         });
       } catch {
-        res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
+        return res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
           statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
           message: "An error has ocurred",
         });
@@ -138,12 +138,12 @@ export default function routes(server: Express) {
 
       await updateProduct(newProduct, userId);
 
-      res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
+      return res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
         statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
         message: "Product updated succesfully",
       });
     } catch {
-      res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
+      return res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
         statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
         message: "An error has ocurred",
       });
@@ -157,12 +157,12 @@ export default function routes(server: Express) {
 
       await removeProduct(productId, userId);
 
-      res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
+      return res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
         statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
         message: "Product removed succesfully",
       });
     } catch {
-      res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
+      return res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
         statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
         message: "An error has ocurred",
       });
@@ -175,12 +175,12 @@ export default function routes(server: Express) {
 
       await uncheckAllProducts(userId);
 
-      res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
+      return res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
         statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
         message: "All products unchecked successfully",
       });
     } catch {
-      res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
+      return res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
         statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
         message: "An error has ocurred",
       });
@@ -193,12 +193,12 @@ export default function routes(server: Express) {
 
       await checkAllProducts(userId);
 
-      res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
+      return res.status(ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.code).json({
         statusMessage: ROUTE_RESPONSE_MESSAGE.ROUTE_SUCCESS.statusMessage,
         message: "All products checked successfully",
       });
     } catch {
-      res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
+      return res.status(DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.code).json({
         statusMessage: DB_RESPONSE_MESSAGE.INSERT_DB_ERROR.statusMessage,
         message: "An error has ocurred",
       });
