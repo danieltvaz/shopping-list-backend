@@ -6,9 +6,6 @@ problem that ever come over and over. What should we buy? Are we forgetting abou
 price of this product? is cheaper or more expensive now? Then, I think: "i'm a programmer, what not build a tool do
 solve this problem?"
 
-This project is hosted on my personal AWS infrastructure, feel free to use:  
-https://shopping-list.danieltostes.dev/
-
 ## ✨ Features
 
 - Add items with product name and price
