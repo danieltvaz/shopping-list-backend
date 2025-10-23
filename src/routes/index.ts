@@ -53,7 +53,7 @@ export default function routes(server: Express) {
 
   server.post("/auth/signup", async (req, res) => {
     try {
-      const email = req.body.email;
+      const email = req.body.email?.toLowerCase();
       const password = req.body.password;
       const name = req.body.name;
 
