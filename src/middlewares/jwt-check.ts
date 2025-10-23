@@ -19,7 +19,7 @@ export default async function jwtCheck(req: Request, res: Response, next: NextFu
         });
       } else {
         const userEmail = validJwt.email;
-        const userId = await getUserId(userEmail);
+        const userId = validJwt.userId;
 
         req.headers.user = JSON.stringify({
           email: userEmail,
